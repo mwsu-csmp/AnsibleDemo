@@ -1,0 +1,67 @@
+---
+
+- name: Install and start web service on all hosts
+  hosts: all
+  become: true
+  become_user: root
+  tasks:
+  - name: Stop httpd
+    service:
+      name: httpd
+      state: stopped
+    when: ansible_distribution == 'CentOS'
+
+  - name: Stop apache2
+    service:
+      name: apache2
+      state: stopped
+    when: ansible_distribution == 'openSUSE Leap'
+
+  - name: Delete phpinfo.php on CentOS
+    file:
+      path: /var/www/html/phpinfo.php
+      state: absent
+    when: ansible_distribution == 'CentOS'
+
+  - name: Delete phpinfo.php on  OpenSUSE
+    file:
+      path: /srv/www/htdocs/phpinfo.php
+      state: absent
+    when: ansible_distribution == 'openSUSE Leap'
+
+  - name: Uninstall Webservice and PHP on CentOS
+    yum:
+      name: 
+      - httpd
+      - php
+      state: absent
+    when: ansible_distribution == 'CentOS'
+
+  - name: Uninstall Webservice and PHP on openSUSE Leap
+    zypper:
+      name:
+        - w3m
+        - apache2
+        - apache2-mod_dnssd 
+        - apache2-prefork 
+        - libgc1
+        - php7-ctype 
+        - php7-dom 
+        - php7-iconv 
+        - php7-json 
+        - php7-sqlite 
+        - php7-tokenizer
+        - php7-xmlreader 
+        - php7-xmlwriter
+        - php7
+        - apache2-mod_php7 
+      state: absent 
+    when: ansible_distribution == 'openSUSE Leap'
+
+  - name: Close port 80
+    firewalld:
+      zone: public
+      service: http
+      state: disabled
+      permanent: false 
+
