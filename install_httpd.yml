@@ -1,7 +1,7 @@
 ---
 
 - name: Install and start web service on all hosts
-  hosts: all
+  hosts: CentOS 
   become: true
   tasks:
   - name: Install httpd
@@ -16,5 +16,5 @@
       zone: public
       service: http
       state: enabled
-      permanent: false 
+      permanent: true 
 
