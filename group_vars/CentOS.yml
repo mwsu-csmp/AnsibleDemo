@@ -1,0 +1,4 @@
+web_package: httpd
+php_package: php
+phpinfo_dir: /var/www/html/phpinfo.php
+

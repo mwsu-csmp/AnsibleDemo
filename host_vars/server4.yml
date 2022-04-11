@@ -1,0 +1,19 @@
+web_package: apache2 
+phpinfo_dir: /srv/www/htdocs/phpinfo.php 
+php_package:
+  - libapache2-mod-php
+  - w3m
+  - apache2
+  - apache2-mod_dnssd
+  - apache2-prefork
+  - libgc1
+  - php7-ctype
+  - php7-dom
+  - php7-iconv
+  - php7-json
+  - php7-sqlite
+  - php7-tokenizer
+  - php7-xmlreader
+  - php7-xmlwriter
+  - php7 
+  - apache2-mod_php7
