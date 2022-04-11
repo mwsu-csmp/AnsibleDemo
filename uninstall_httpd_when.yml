@@ -11,8 +11,6 @@
   - name: Uninstall httpd
     yum:
       name: httpd
-      state: absent
-
   - name: Close port 80
     firewalld:
       zone: public
