@@ -1,0 +1,21 @@
+---
+
+- name: Install and start web service on all hosts
+  hosts: CentOS 
+  become: true
+  tasks:
+  - name: Install httpd
+    yum:
+      name: httpd
+  - name: Start httpd
+    service:
+      name: httpd
+      state: started
+  - name: Open port 80
+    firewalld:
+      zone: public
+      service: http
+      state: enabled
+      permanent: true 
+      immediate: true
+
