@@ -43,5 +43,6 @@
       zone: public
       service: http
       state: enabled
-      permanent: false 
+      permanent: true
+      immediate: true 
 
