@@ -1,0 +1,61 @@
+---
+
+- name: Stop and uninstall web service on web servers only
+  hosts: WebServers
+  become: true
+  become_user: root
+  tasks:
+  - name: Stop webservice
+    service:
+      name: "{{ web_package }}"
+      state: stopped
+
+  - name: Delete phpinfo.php
+    file:
+      path: "{{ phpinfo_dir }}"
+      state: absent
+
+  - name: Uninstall Webservice and PHP
+    package:
+      name:
+      - "{{ web_package }}"
+      - "{{ php_package }}"
+      state: absent
+
+  - name: Close port 80
+    firewalld:
+      zone: public
+      service: http
+      state: disabled
+      permanent: true
+      immediate: true
+
+- hosts: DatabaseServers
+  become: true
+  tasks:
+  - name: Stop MySQL
+    service:
+      name: "{{ dbservice_name }}"
+      state: stopped
+
+  - name: Uninstall MySQL database on database servers
+    package:
+      name: 
+      - "{{ dbserver_package }}"
+      state: absent
+
+- hosts: FileServers
+  become: true
+  tasks:
+
+  - name: Stop File Server
+    service:
+      name: "{{ fileservice_name }}"
+      state: stopped
+
+  - name: Uninstall Samba on file servers
+    package:
+      name:
+      - "{{ fileserver_package }}"
+      state: absent
+

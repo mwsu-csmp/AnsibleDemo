@@ -1,0 +1,15 @@
+[CentOS]
+server1
+server2
+server3
+[OpenSUSE]
+server4
+
+[WebServers]
+server1
+server2
+[DatabaseServers]
+server3
+server4
+[FileServers]
+server4

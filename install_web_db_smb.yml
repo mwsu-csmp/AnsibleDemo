@@ -1,0 +1,76 @@
+---
+
+- name: Update packages on all hosts
+  hosts: all
+  become: true
+
+  pre_tasks:
+  - name: Install updats
+    package:
+      name: "*"
+      state: latest
+      update_cache: true
+
+- name: Install and start web service on web servers only 
+  hosts: WebServers 
+  become: true
+  become_user: root
+
+  tasks:
+  - name: Install Webservice and PHP
+    package:
+      name: 
+      - "{{ web_package }}"
+      - "{{ php_package }}"
+      state: latest
+
+  - name: Create phpinfo.php and put it in the right directory
+    copy:
+      dest: "{{ phpinfo_dir }}"
+      content: |
+        <?php phpinfo(); ?>
+
+  - name: Start webservice 
+    service:
+      name: "{{ web_package }}" 
+      state: started
+
+  - name: Open port 80
+    firewalld:
+      zone: public
+      service: http
+      state: enabled
+      permanent: true 
+      immediate: true
+
+- hosts: DatabaseServers
+  become: true
+  tasks:
+
+  - name: Install MySQL database on database servers
+    package:
+      name: 
+      - "{{ dbserver_package }}"
+      state: present
+  
+  - name: Start MySQL 
+    service:
+      name: "{{ dbservice_name }}"
+      state: started
+ 
+- hosts: FileServers
+  become: true
+  tasks:
+
+  - name: Install Samba on file servers
+    package:
+      name: 
+      - "{{ fileserver_package }}"
+      state: latest 
+
+  - name: Start File Server 
+    service:
+      name:
+      - "{{ fileservice_name }}"
+      state: started
+

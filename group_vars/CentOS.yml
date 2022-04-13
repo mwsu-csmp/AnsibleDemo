@@ -1,4 +1,7 @@
 web_package: httpd
 php_package: php
 phpinfo_dir: /var/www/html/phpinfo.php
-
+dbserver_package: mysql-server
+dbservice_name: mysqld
+fileserver_package: samba
+fileservice_name: smb

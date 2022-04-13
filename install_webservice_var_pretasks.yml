@@ -1,0 +1,40 @@
+---
+
+- name: Install and start web service on web servers only 
+  hosts: WebServers 
+  become: true
+  become_user: root
+
+  pre_tasks:
+  - name: Update packages on web servers
+    package:
+      update_cache: true
+
+  tasks:
+  - name: Install Webservice and PHP
+    package:
+      name: 
+      - "{{ web_package }}"
+      - "{{ php_package }}"
+      update_cache: true
+      state: latest
+
+  - name: Create phpinfo.php and put it in the right directory
+    copy:
+      dest: "{{ phpinfo_dir }}"
+      content: |
+        <?php phpinfo(); ?>
+
+  - name: Start webservice 
+    service:
+      name: "{{ web_package }}" 
+      state: started
+
+  - name: Open port 80
+    firewalld:
+      zone: public
+      service: http
+      state: enabled
+      permanent: true 
+      immediate: true
+

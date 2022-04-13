@@ -1,0 +1,32 @@
+---
+
+- name: Stop and uninstall web service on web servers only 
+  hosts: WebServers 
+  become: true
+  become_user: root
+  tasks:
+  - name: Stop webservice
+    service:
+      name: "{{ web_package }}"
+      state: stopped
+
+  - name: Delete phpinfo.php
+    file:
+      path: "{{ phpinfo_dir }}"
+      state: absent
+
+  - name: Uninstall Webservice and PHP
+    package:
+      name: 
+      - "{{ web_package }}"
+      - "{{ php_package }}"
+      state: absent 
+
+  - name: Close port 80
+    firewalld:
+      zone: public
+      service: http
+      state: disabled
+      permanent: true 
+      immediate: true
+
