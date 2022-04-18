@@ -1,0 +1,87 @@
+---
+
+- name: Operate on multiple files
+  hosts: WebServers
+  become: true
+  tasks:
+
+  - name: Upload demo files
+    tags: upload-files
+    copy: src={{ item.src }} dest={{ item.dest }} owner=byan mode=0460
+    with_items:
+      - { src: 'file1', dest: '/home/byan/Documents' }
+      - { src: 'file2', dest: '/home/byan/Documents' }
+      - { src: 'file3', dest: '/home/byan/Documents' } 
+
+  - name: Print  demo files with pattern
+    tags: upload-files-vars-pattern
+    debug:
+      msg: "{{ item }}"
+    with_fileglob:
+      - "file*"
+
+  - name: Upload demo files with task var and pattern
+    tags: upload-files-vars-pattern
+    vars:
+      folder: /home/byan/Documents
+    copy:
+      src: '{{ item }}'
+      dest: '{{ folder }}'
+      owner: byan 
+      mode: 0460
+    with_fileglob:
+      - "file*"
+
+  - name: Upload demo files with with_items loop 
+    tags: upload-files
+    copy: src={{ item.src }} dest={{ item.dest }} owner=byan mode=0460
+    with_items:
+      - { src: 'file1', dest: '/home/byan/Documents' }
+      - { src: 'file2', dest: '/home/byan/Documents' }
+      - { src: 'file3', dest: '/home/byan/Documents' }
+
+
+  - name: Delete demo files without vars
+    tags: delete-files-no-vars
+    file: name={{ item.src }} state=absent
+    with_items:
+      - { src: '/home/byan/Documents/file1' }
+      - { src: '/home/byan/Documents/file2' }
+      - { src: '/home/byan/Documents/file3' }
+
+  - name: Delete demo files with task vars
+    tags: delete-files-vars
+    vars:
+      folder: /home/byan/Documents/
+    file: name={{ item.src }} state=absent
+    with_items:
+      - { src: '{{ folder }}file1' }
+      - { src: '{{ folder }}file2' }
+      - { src: '{{ folder }}file3' }
+
+  - name: Search for the target files to delete
+    tags: find-files,register-found-files
+    shell: "find file*" 
+    args:
+      chdir: "/home/byan/Documents"
+    register: found_files
+  
+  - name: Print found files
+    tags: find-files,print-found-files
+    debug:
+      var: found_files 
+
+  - name: Download the found files before deleting them
+    tags: find-files,download-found-files
+    fetch:
+      src : "/home/byan/Documents/{{ item }}"
+      dest: backups
+    with_items: "{{ found_files.stdout_lines }}"
+
+  - name: Delete demo files on servers remotely with pattern
+    tags: find-files,delete-remote-files-with-pattern
+    file:
+      path: "/home/byan/Documents/{{ item }}"
+      state: absent
+    with_items: "{{ found_files.stdout_lines }}"
+

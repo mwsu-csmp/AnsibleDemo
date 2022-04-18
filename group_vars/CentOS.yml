@@ -1,7 +1,9 @@
 web_package: httpd
 php_package: php
 phpinfo_dir: /var/www/html/phpinfo.php
+web_doc_root: /var/www/html
 dbserver_package: mysql-server
 dbservice_name: mysqld
 fileserver_package: samba
 fileservice_name: smb
+web_config_file: /etc/httpd/conf/httpd.conf

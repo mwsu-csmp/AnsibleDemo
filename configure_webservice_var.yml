@@ -1,0 +1,41 @@
+---
+
+- name: Install and start web service on all hosts
+  hosts: all
+  become: true
+  become_user: root
+  tasks:
+  - name: Install Webservice and PHP
+    package:
+      name: 
+      - "{{ web_package }}"
+      - "{{ php_package }}"
+      update_cache: true
+      state: latest
+
+  - name: Create phpinfo.php and put it in the right directory
+    copy:
+      dest: "{{ phpinfo_dir }}"
+      content: |
+        <?php phpinfo(); ?>
+
+  - name: Change admin email
+    tags: change-admin-email
+    lineinfile: 
+      path: "{{ web_config_file }}" 
+      regexp: '^ServerAdmin'
+      line: ServerAdmin byan@missouriwestern.edu
+
+  - name: Start webservice 
+    service:
+      name: "{{ web_package }}" 
+      state: started
+
+  - name: Open port 80
+    firewalld:
+      zone: public
+      service: http
+      state: enabled
+      permanent: true 
+      immediate: true
+

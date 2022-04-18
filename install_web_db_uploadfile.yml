@@ -1,0 +1,75 @@
+---
+
+- name: Update packages on all hosts
+  hosts: all
+  become: true
+
+  pre_tasks:
+  - name: Install updats
+    package:
+      name: "*"
+      state: latest
+      update_cache: true
+
+- name: Install and start web service on web servers only 
+  hosts: WebServers 
+  become: true
+  become_user: root
+
+  tasks:
+  - name: Install Webservice and PHP
+    package:
+      name: 
+      - "{{ web_package }}"
+      - "{{ php_package }}"
+      state: latest
+
+  - name: Create phpinfo.php and put it in the right directory
+    copy:
+      dest: "{{ phpinfo_dir }}"
+      content: |
+        <?php phpinfo(); ?>
+
+  - name: Upload the default page to the document root directory
+    tags: add-default-page
+    copy:
+      src: site_default.html
+      dest: "{{ web_doc_root }}/index.html"
+      owner: root
+      group: root
+      mode: 0644
+
+  - name: Remove the default customized page
+    tags: remove-default-page
+    file:
+      name: "{{ web_doc_root }}/index.html" 
+      state: absent 
+
+  - name: Start webservice 
+    service:
+      name: "{{ web_package }}" 
+      state: started
+
+  - name: Open port 80
+    firewalld:
+      zone: public
+      service: http
+      state: enabled
+      permanent: true 
+      immediate: true
+
+- hosts: DatabaseServers
+  become: true
+  tasks:
+
+  - name: Install MySQL database on database servers
+    package:
+      name: 
+      - "{{ dbserver_package }}"
+      state: present
+  
+  - name: Start MySQL 
+    service:
+      name: "{{ dbservice_name }}"
+      state: started
+ 

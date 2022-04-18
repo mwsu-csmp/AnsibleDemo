@@ -17,7 +17,9 @@ php_package:
   - php7-xmlwriter
   - php7
   - apache2-mod_php7
+web_doc_root: /srv/www/htdocs
 dbserver_package: mariadb 
 dbservice_name: mariadb 
 fileserver_package: samba
 fileservice_name: smb
+web_config_file: /etc/apache2/httpd.conf

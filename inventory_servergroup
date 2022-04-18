@@ -8,6 +8,7 @@ server4
 [WebServers]
 server1
 server2
+server4
 [DatabaseServers]
 server3
 server4
