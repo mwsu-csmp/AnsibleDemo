@@ -1,0 +1,6 @@
+- name: Add ssh key for the new user student
+  tags: always
+  authorized_key:
+    user: student
+    key: "{{ lookup('file', '~/.ssh/ansible.pub') }}"
+

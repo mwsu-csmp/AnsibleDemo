@@ -1,0 +1,32 @@
+---
+- hosts: WebServers
+  become: true
+  vars:
+    package_names:
+      - nano
+      - vim
+      - telnet
+  tasks:
+    - name: Check if listed package is installed on the target host
+      package:
+        name: "{{ item }}"
+        state: present
+      check_mode: true
+      loop: "{{ package_names }}"
+      register: package_check
+
+    - name: "Print check results"
+      debug:
+        msg: "{{ item.item }} is not installed? {{ item.changed }}"
+      with_items: "{{ package_check.results }}"
+      loop_control:
+        label: "{{ item.item }}"
+
+    - name: Install package if not present 
+      package:
+        name: "{{ item.item }}"
+        state: present
+      when: item.changed        #do not wrap the condition with vars in {{}} 
+      with_items: "{{ package_check.results }}"
+      loop_control:
+        label: "{{ item.item }}"

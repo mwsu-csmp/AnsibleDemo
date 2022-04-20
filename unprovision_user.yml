@@ -1,0 +1,25 @@
+---
+
+- hosts: all
+  become: true
+  ignore_errors: true
+  tasks:
+
+  - name: Remove student user from sudoers
+    file:
+      path: sudoer_student
+      state: absent
+
+  - name: Remove ssh key of student
+    authorized_key:
+      user: student
+      key: "{{ lookup('file', '~/.ssh/ansible.pub') }}"
+      state: absent
+
+  - name: Remove user student
+    user:
+      name: student
+      groups: root
+      state: absent
+      remove: true
+

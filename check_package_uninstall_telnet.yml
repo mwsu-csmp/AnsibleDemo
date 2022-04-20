@@ -1,0 +1,13 @@
+---
+- hosts: WebServers
+  become: true
+  vars:
+    package_names:
+      - telnet
+  tasks:
+    - name: Uninstall the listed packages from the target host
+      package:
+        name: "{{ item }}"
+        state: absent
+      loop: "{{ package_names }}"
+

@@ -1,0 +1,5 @@
+- name: Install Samba on file servers
+  package:
+    name:
+    - "{{ fileserver_package }}"
+    state: latest

@@ -1,0 +1,37 @@
+---
+
+- hosts: all
+  become: true
+  pre_tasks:
+
+  - name: update packages
+    tags: always
+    package:
+       name: "*"
+       state: latest
+       update_cache: true
+    changed_when: false
+
+- hosts: all
+  become: true
+  tasks:
+
+  - name: Add a new user student
+    tags: always
+    user:
+      name: student
+      groups: root
+
+  - name: Add ssh key for the new user student
+    tags: always
+    authorized_key:
+      user: student
+      key: "{{ lookup('file', '~/.ssh/ansible.pub') }}"
+   
+  - name: Add student user to sudoers without password
+    copy:
+      src: sudoer_student
+      dest: /etc/sudoers.d/student
+      owner: root
+      group: root
+      mode: 0440

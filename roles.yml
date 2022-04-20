@@ -1,0 +1,32 @@
+---
+
+- name: Update packages on all hosts
+  hosts: all
+  become: true
+
+  pre_tasks:
+  - name: Install updats
+    package:
+      name: "*"
+      state: latest
+      update_cache: true
+
+- hosts: all
+  become: true
+  roles:
+    - Base
+
+- hosts: WebServers 
+  become: true
+  roles:
+    - WebServers
+
+- hosts: DatabaseServers
+  become: true
+  roles:
+    - DatabaseServers
+
+- hosts: FileServers
+  become: true
+  roles:
+    - FileServers

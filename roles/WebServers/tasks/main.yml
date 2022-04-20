@@ -1,0 +1,35 @@
+- name: Install Webservice and PHP
+  package:
+    name:
+    - "{{ web_package }}"
+    - "{{ php_package }}"
+    state: latest
+
+- name: Create phpinfo.php and put it in the right directory
+  copy:
+    dest: "{{ phpinfo_dir }}"
+    content: |
+      <?php phpinfo(); ?>
+
+- name: Upload the default page to the document root directory
+  tags: add-default-page
+  copy:
+    src: site_default.html
+    dest: "{{ web_doc_root }}/index.html"
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Start webservice
+  service:
+    name: "{{ web_package }}"
+    state: started
+
+- name: Open port 80
+  firewalld:
+    zone: public
+    service: http
+    state: enabled
+    permanent: true
+    immediate: true
+

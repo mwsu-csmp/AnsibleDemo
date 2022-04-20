@@ -1,0 +1,11 @@
+- name: Install MySQL database on database servers
+  package:
+    name:
+    - "{{ dbserver_package }}"
+    state: present
+
+- name: Start MySQL
+  service:
+    name: "{{ dbservice_name }}"
+    state: started
+
