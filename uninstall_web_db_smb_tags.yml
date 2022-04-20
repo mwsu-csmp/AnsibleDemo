@@ -6,7 +6,7 @@
   become_user: root
   tasks:
   - name: Stop webservice
-    tags: stop, web, apache, httpd
+    tags: stopweb, stopapache, stophttpd
     service:
       name: "{{ web_package }}"
       state: stopped
