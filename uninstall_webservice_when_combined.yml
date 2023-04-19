@@ -1,6 +1,6 @@
 ---
 
-- name: Install and start web service on all hosts
+- name: Stop and uninstall web service on all hosts
   hosts: all
   become: true
   become_user: root
