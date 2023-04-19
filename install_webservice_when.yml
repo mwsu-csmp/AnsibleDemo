@@ -9,6 +9,11 @@
     yum:
       update_cache: true
     when: ansible_distribution == 'CentOS'
+    
+  - name: Stop packagekit because it locks package management for quite a while
+    shell:
+      "systemctl disable packagekit && systemctl stop packagekit && systemctl mask packagekit"
+    when: ansible_distribution == 'openSUSE Leap'
 
   - name: Update repositoy index on openSUSE Leap
     zypper:
